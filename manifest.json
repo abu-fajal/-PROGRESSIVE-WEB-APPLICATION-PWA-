@@ -1,0 +1,26 @@
+{
+    "name": "Ashopy",
+    "short_name": "Ashopy",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#131921",
+    "theme_color": "#131921",
+    "description": "Your favorite online shopping PWA",
+    "icons": [
+        {
+            "src": "images/logo-72.png",
+            "sizes": "72x72",
+            "type": "image/png"
+        },
+        {
+            "src": "images/logo-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "images/logo-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
