@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amazon</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#131921">
+    <!-- iOS PWA Support -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon" href="images/logo-192.png">
+    <style>
+        /* Additional CSS for modal, footer, and products */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            width: 300px;
+        }
+        .modal h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .modal input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .modal button {
+            width: 100%;
+            padding: 10px;
+            background: #ffd814;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .modal .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+        footer {
+            background: #232f3e;
+            color: white;
+            padding: 20px 0;
+            margin-top: 20px;
+        }
+        .footer-links {
+            display: flex;
+            justify-content: space-around;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .footer-column h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .footer-column ul {
+            list-style: none;
+            padding: 0;
+        }
+        .footer-column ul li {
+            margin: 5px 0;
+        }
+        .footer-column ul li a {
+            color: #ddd;
+            text-decoration: none;
+        }
+        .footer-column ul li a:hover {
+            text-decoration: underline;
+        }
+        .footer-bottom {
+            text-align: center;
+            padding: 10px 0;
+            border-top: 1px solid #3a4553;
+            margin-top: 20px;
+        }
+
+        /* PRODUCT GRID STYLING */
+        .product-section {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .product-section h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .product-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+        .product-img {
+            height: 200px;
+            background-size: contain;
+            background-position: center;
+        }
+        .product-info {
+            padding: 15px;
+        }
+        .product-title {
+            font-size: 16px;
+            margin: 10px 0;
+            color: #0066c0;
+        }
+        .product-price {
+            font-weight: bold;
+            font-size: 18px;
+            color: #B12704;
+        }
+        .product-rating {
+            color: #FFA41C;
+            margin: 5px 0;
+        }
+        .product-sales {
+            font-size: 12px;
+            color: #565959;
+        }
+        .product-sales span {
+            color: #B12704;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="navbar">
+            <div class="nav-logo border">
+                <div class="logo"></div>
+            </div>
+            
+
+            <div class="nav-address">
+                <p class="add-first">Deliver to</p>
+                <div class="add-icon">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <p class="add-sec">India</p>
+                </div>
+            </div>
+            <div class="nav-search">
+                <select class="search-select">
+                    <option value="">All</option>
+                </select>
+                <input placeholder="Search Ashopy" class="search-input">
+                <div class="search-icon">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+            </div>
+            <div class="nav-signin border" onclick="openModal()">
+                <p><span>Hello, sign in</span></p>
+                <p class="nav-second" style="color: beige;">Account & Lists</p>
+            </div>
+            <div class="nav-return border">
+                <p><span>Returns</span></p>
+                <p class="nav-second">Orders</p>
+            </div>
+            <div class="nav-cart border" style="color: aliceblue;">
+                <i class="fa-solid fa-cart-shopping"></i>
+                Cart
+            </div>
+        </div>
+        <div class="panel">
+            <div class="panel-all">
+                <i class="fa-solid fa-bars"></i>
+                All
+            </div>
+            <div class="panel-ops">
+                <p>Today's Deals</p>
+                <p>Customer Service</p>
+                <p>Registry</p>
+                <p>Gift Carts</p>
+                <p>Sell</p>
+            </div>
+            <div class="panels-deals">
+                Shop deals in Electronics
+            </div>
+        </div>
+    </header>
+
+    <!-- Login/Signup Modal -->
+    <div class="overlay" id="overlay"></div>
+    <div class="modal" id="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>Sign in</h2>
+        <input type="email" placeholder="Email or mobile phone number">
+        <input type="password" placeholder="Password">
+        <button>Continue</button>
+        <p style="font-size: 12px; margin-top: 10px;">
+            By continuing, you agree to Ashopy's <a href="#">Conditions of Use</a> and <a href="#">Privacy Notice</a>.
+        </p>
+        <p style="font-size: 14px; margin-top: 20px;">
+            New to Ashopy? <a href="#" style="color: #0066c0;">Create an account</a>
+        </p>
+    </div>
+
+    <div class="hero-section"></div>
+    <div class="hero-sec"></div>
+
+    <!-- PRODUCT GRID SECTION -->
+    <div class="product-section">
+        <h2>Trending Products</h2>
+        <div class="product-grid">
+            <!-- Product 1 -->
+            <div class="product-card">
+                <div class="product-img" style="background-image: url('https://m.media-amazon.com/images/I/71an9eiBxpL._AC_UL320_.jpg');"></div>
+                <div class="product-info">
+                    <h3 class="product-title">Apple iPhone 14 (128GB) - Blue</h3>
+                    <div class="product-rating">
+                        ⭐⭐⭐⭐⭐ (4.8)
+                    </div>
+                    <div class="product-price">₹79,900</div>
+                    <div class="product-sales">Sold <span>1,200+</span> in last week</div>
+                </div>
+            </div>
+
+            <!-- Product 2 -->
+            <div class="product-card">
+                <div class="product-img" style="background-image: url('https://m.media-amazon.com/images/I/61L1ItFgFHL._AC_UL320_.jpg');"></div>
+                <div class="product-info">
+                    <h3 class="product-title">Sony WH-1000XM4 Wireless Headphones</h3>
+                    <div class="product-rating">
+                        ⭐⭐⭐⭐⭐ (4.7)
+                    </div>
+                    <div class="product-price">₹22,990</div>
+                    <div class="product-sales">Sold <span>850+</span> in last week</div>
+                </div>
+            </div>
+
+            <!-- Product 3 -->
+            <div class="product-card">
+                <div class="product-img" style="background-image: url('https://m.media-amazon.com/images/I/71WkDp--uqL._AC_UL320_.jpg');"></div>
+                <div class="product-info">
+                    <h3 class="product-title">Samsung Galaxy Watch 5 (44mm)</h3>
+                    <div class="product-rating">
+                        ⭐⭐⭐⭐ (4.3)
+                    </div>
+                    <div class="product-price">₹23,999</div>
+                    <div class="product-sales">Sold <span>600+</span> in last week</div>
+                </div>
+            </div>
+
+            <!-- Product 4 -->
+            <div class="product-card">
+                <div class="product-img" style="background-image: url('https://rukminim2.flixcart.com/image/312/312/xif0q/mobile/d/k/s/-original-imahbygmyg5cuzdz.jpeg?q=70');"></div>
+                <div class="product-info">
+                    <h3 class="product-title">Realme 14T 5G (128GB)</h3>
+                    <div class="product-rating">
+                        ⭐⭐⭐⭐⭐ (4.6)
+                    </div>
+                    <div class="product-price">₹61,999</div>
+                    <div class="product-sales">Sold <span>900+</span> in last week</div>
+                </div>
+            </div>
+
+            <!-- Product 5 -->
+            <div class="product-card">
+                <div class="product-img" style="background-image: url('https://rukminim2.flixcart.com/image/240/240/xif0q/office-study-chair/z/t/2/1-teak-sagun-58-42-js-29-beaatho-121-92-original-imagrwgshgp2bhwv.jpeg?q=60');"></div>
+                <div class="product-info">
+                    <h3 class="product-title">Ashopy Echo Dot (4th Gen)</h3>
+                    <div class="product-rating">
+                        ⭐⭐⭐⭐ (4.2)
+                    </div>
+                    <div class="product-price">₹4,499</div>
+                    <div class="product-sales">Sold <span>2,500+</span> in last week</div>
+                </div>
+            </div>
+
+            <!-- Product 6 -->
+            <div class="product-card">
+                <div class="product-img" style="background-image: url('https://m.media-amazon.com/images/I/71S8U9VzLTL._AC_UL320_.jpg');"></div>
+                <div class="product-info">
+                    <h3 class="product-title">HP Pavilion 15 Laptop</h3>
+                    <div class="product-rating">
+                        ⭐⭐⭐⭐ (4.0)
+                    </div>
+                    <div class="product-price">₹62,990</div>
+                    <div class="product-sales">Sold <span>400+</span> in last week</div>
+                </div>
+            </div>
+             <div class="product-card">
+                <div class="product-img" style="background-image: url('https://rukminim2.flixcart.com/image/420/420/xif0q/bedsheet/h/d/5/bedsheet-grey-circle-flat-ncs-original-imagz5yyjgf2ugsm.jpeg?q=60');"></div>
+                <div class="product-info">
+                    <h3 class="product-title">Ashopy Echo Dot (4th Gen)</h3>
+                    <div class="product-rating">
+                        ⭐⭐⭐⭐ (4.2)
+                    </div>
+                    <div class="product-price">₹4,499</div>
+                    <div class="product-sales">Sold <span>2,500+</span> in last week</div>
+                </div>
+            </div>
+             <div class="product-card">
+                <div class="product-img" style="background-image: url('https://rukminim2.flixcart.com/image/420/420/xif0q/shirt/7/7/6/s-st2-vebnor-original-imahekf5guf9jzar.jpeg?q=60');"></div>
+                <div class="product-info">
+                    <h3 class="product-title">Ashopy Echo Dot (4th Gen)</h3>
+                    <div class="product-rating">
+                        ⭐⭐⭐⭐ (4.2)
+                    </div>
+                    <div class="product-price">₹4,499</div>
+                    <div class="product-sales">Sold <span>2,500+</span> in last week</div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <div class="shop-section">
+        <!-- Your existing boxes here -->
+        <!-- ... -->
+    </div>
+
+    <!-- Footer Section -->
+    <footer>
+        <div class="footer-links">
+            <div class="footer-column">
+                <h3>Get to Know Us</h3>
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Press Releases</a></li>
+                    <li><a href="#">Ashopy Science</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Make Money with Us</h3>
+                <ul>
+                    <li><a href="#">Sell products on Ashopy</a></li>
+                    <li><a href="#">Sell on Ashopy Business</a></li>
+                    <li><a href="#">Become an Affiliate</a></li>
+                    <li><a href="#">Advertise Your Products</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Ashopy Payment Products</h3>
+                <ul>
+                    <li><a href="#">Ashopy Business Card</a></li>
+                    <li><a href="#">Shop with Points</a></li>
+                    <li><a href="#">Reload Your Balance</a></li>
+                    <li><a href="#">Ashopy Currency Converter</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Let Us Help You</h3>
+                <ul>
+                    <li><a href="#">Ashopy and COVID-19</a></li>
+                    <li><a href="#">Your Account</a></li>
+                    <li><a href="#">Your Orders</a></li>
+                    <li><a href="#">Shipping Rates & Policies</a></li>
+                    <li><a href="#">Returns & Replacements</a></li>
+                    <li><a href="#">Help</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="logo"></div>
+            <p>&copy; 1996-2023, Ashopy.com, Inc. or its affiliates</p>
+        </div>
+    </footer>
+
+    <script>
+        // Modal functionality
+        function openModal() {
+            document.getElementById('modal').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+        // Close modal when clicking outside
+        document.getElementById('overlay').addEventListener('click', closeModal);
+    </script>
+    <script src="script.js"></script>
+</body>
+
+</html>
