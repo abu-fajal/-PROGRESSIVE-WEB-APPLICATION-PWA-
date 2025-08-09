@@ -142,3 +142,7 @@ Backend Integration: Connect to Firebase or Node.js for real product data.
 Payment Gateway: Add Stripe or Razorpay for checkout.
 
 Advanced Search: Algolia or Elasticsearch for faster results.
+
+#OUTPUT
+
+<img width="960" height="540" alt="Image" src="https://github.com/user-attachments/assets/f87c1191-635c-47ee-85f7-bc63bd7c592c" />
